@@ -1,0 +1,10 @@
+
+// plugin para organizar as classes do tailwind
+// obs: após a intalação, criar o arquivo .prettierrc na pasta raiz do projeto 
+npm i -D prettier-plugin-tailwindcss
+
+// shadcn
+npx shadcn@2.0.6 init
+
+// button do shadcn
+npx shadcn@2.0.6 init add button
