@@ -8,3 +8,10 @@ npx shadcn@2.0.6 init
 
 // button do shadcn
 npx shadcn@2.0.6 init add button
+
+// prisma
+npm i prisma
+npx prisma init
+npx prisma format
+npx prisma migrate dev --name init
+npx prisma studio
