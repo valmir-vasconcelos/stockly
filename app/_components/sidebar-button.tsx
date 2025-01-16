@@ -1,7 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Button } from "./button";
 import { usePathname } from "next/navigation";
 
 interface SidebarButtonProps {
