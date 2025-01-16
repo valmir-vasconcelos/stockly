@@ -14,15 +14,15 @@ export default function Sidebar() {
             </div>
             <div className="flex flex-col gap-2 p-2">
                 <SidebarButton href="/">
-                    <LayoutGridIcon size={20} /> Dashboard
+                    <LayoutGridIcon size={25} /> Dashboard
                 </SidebarButton>
 
                 <SidebarButton href="/products">
-                    <PackageIcon size={20} /> Produtos
+                    <PackageIcon size={25} /> Produtos
                 </SidebarButton>
 
                 <SidebarButton href="/sales">
-                    <ShoppingBasketIcon size={20} /> Vendas
+                    <ShoppingBasketIcon size={25} /> Vendas
                 </SidebarButton>
             </div>
         </div>
