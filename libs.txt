@@ -10,10 +10,17 @@ npx shadcn@2.0.6 init
 npx shadcn@2.0.6 init add button
 npx shadcn@2.0.6 add table
 npm i @tanstack/react-table
+npx shadcn@2.0.6 add badge
 
 // prisma
-npm i prisma
-npx prisma init
-npx prisma format
-npx prisma migrate dev --name init
-npx prisma studio
+npm i prisma        // instala o prisma
+npx prisma init     // inicia o prisma na aplicação. Cria os arquivos de configuração
+npx prisma format   // formata o código do arquivo schema.prisma
+npx prisma migrate dev --name init  // aplica uma migração
+npx prisma studio   // abre os prisma studio
+npx prisma db push  // aplica as migrations em um banco novo
+
+// lib: server-only (não deixa funções de acesso à banco de dados serem importadas em client components)
+npm i server-only@0.0.1
+
+
