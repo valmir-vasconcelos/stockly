@@ -2,10 +2,14 @@ import { Button } from "@/components/ui/button"
 import { PlusIcon } from "lucide-react"
 import { DataTable } from "../_components/data-table"
 import { productTableColumns } from "./_components/table-colum"
-import { getProducts } from "../_data-access/product/get-products"
+//import { getProducts } from "../_data-access/product/get-products"
 
 export default async function ProductsPage() {
-    const products = await getProducts();
+    //const products = await getProducts();
+    const response = await fetch("http://localhost:3000/api/products");
+    const products = await response.json();
+
+    //await buscarCep("68515000")
 
     return (
         <div className="m-8 w-full space-y-8 rounded-lg bg-white p-8">
@@ -19,7 +23,7 @@ export default async function ProductsPage() {
                     Novo produto
                 </Button>
             </div>
-            <DataTable columns={productTableColumns} data={products} />
+            <DataTable columns={productTableColumns} data={JSON.parse(JSON.stringify(products))} />
         </div>
     )
 }
