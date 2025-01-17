@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from "lucide-react"
 import { DataTable } from "../_components/data-table"
+import { getProducts } from "../_data-access/product/get-products"
 import { productTableColumns } from "./_components/table-colum"
-//import { getProducts } from "../_data-access/product/get-products"
 
 export default async function ProductsPage() {
-    //const products = await getProducts();
-    const response = await fetch("http://localhost:3000/api/products");
-    const products = await response.json();
+    const products = await getProducts();
+    //const response = await fetch("http://localhost:3000/api/products");
+    //const products = await response.json();
 
     //await buscarCep("68515000")
 
