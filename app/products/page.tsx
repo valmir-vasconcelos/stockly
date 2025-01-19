@@ -1,12 +1,15 @@
-import { Button } from "@/components/ui/button"
-import { PlusIcon } from "lucide-react"
+
 import { DataTable } from "../_components/data-table"
 import { getProducts } from "../_data-access/product/get-products"
 import { productTableColumns } from "./_components/table-colum"
+import AddProductButton from "./_components/add-product-button"
+
+export const dynamic = "force-dynamic"
 
 export default async function ProductsPage() {
+    //fetch("", {cache:"no-cache"});
     const products = await getProducts();
-    //const response = await fetch("http://localhost:3000/api/products");
+    //const response = await fetch("http://localhost:3000/api/products", { method: "GET", cache: "no-cache" });
     //const products = await response.json();
 
     //await buscarCep("68515000")
@@ -18,10 +21,7 @@ export default async function ProductsPage() {
                     <span className="font-semibold text-xs text-slate-500">Gestão de Produtos</span>
                     <p className="text-gray-500">Lista de produtos cadastrados</p>
                 </div>
-                <Button className="gap-2">
-                    <PlusIcon size={20} />
-                    Novo produto
-                </Button>
+                <AddProductButton />
             </div>
             <DataTable columns={productTableColumns} data={JSON.parse(JSON.stringify(products))} />
         </div>

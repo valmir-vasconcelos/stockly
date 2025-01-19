@@ -6,11 +6,14 @@ npm i -D prettier-plugin-tailwindcss
 // shadcn
 npx shadcn@2.0.6 init
 
-// button do shadcn
+// componentes do shadcn
 npx shadcn@2.0.6 init add button
 npx shadcn@2.0.6 add table
 npm i @tanstack/react-table
 npx shadcn@2.0.6 add badge
+npx shadcn@2.0.6 add dialog
+npx shadcn@2.0.6 add input
+npx shadcn@2.0.6 add form
 
 // prisma
 npm i prisma        // instala o prisma
@@ -22,5 +25,8 @@ npx prisma db push  // aplica as migrations em um banco novo
 
 // lib: server-only (não deixa funções de acesso à banco de dados serem importadas em client components)
 npm i server-only@0.0.1
+
+// lib para formatar números
+npm i react-number-format@5.4.2
 
 
