@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Sidebar from "./_components/sidebar";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
                     <Sidebar />
                     {children}
                 </div>
+                <Toaster richColors />
             </body>
         </html>
     );

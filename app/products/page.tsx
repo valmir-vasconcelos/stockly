@@ -2,7 +2,7 @@
 import { DataTable } from "../_components/data-table"
 import { getProducts } from "../_data-access/product/get-products"
 import { productTableColumns } from "./_components/table-colum"
-import AddProductButton from "./_components/add-product-button"
+import CreateProductButton from "./_components/create-product-button"
 
 export const dynamic = "force-dynamic"
 
@@ -21,7 +21,7 @@ export default async function ProductsPage() {
                     <span className="font-semibold text-xs text-slate-500">Gestão de Produtos</span>
                     <p className="text-gray-500">Lista de produtos cadastrados</p>
                 </div>
-                <AddProductButton />
+                <CreateProductButton />
             </div>
             <DataTable columns={productTableColumns} data={JSON.parse(JSON.stringify(products))} />
         </div>
