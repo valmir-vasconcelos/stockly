@@ -17,6 +17,8 @@ npx shadcn@2.0.6 add form
 npx shadcn@2.0.6 add dropdown-menu
 npx shadcn@2.0.6 add alert-dialog
 npx shadcn@2.0.6 add sonner
+npx shadcn@2.0.6 add sheet
+npx shadcn@2.0.6 add command popover
 
 // prisma
 npm i prisma        // instala o prisma
@@ -31,5 +33,7 @@ npm i server-only@0.0.1
 
 // lib para formatar números
 npm i react-number-format@5.4.2
+
+https://github.com/felipemotarocha/stockly
 
 
