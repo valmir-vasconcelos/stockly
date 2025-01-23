@@ -24,7 +24,7 @@ npx shadcn@2.0.6 add command popover
 npm i prisma        // instala o prisma
 npx prisma init     // inicia o prisma na aplicação. Cria os arquivos de configuração
 npx prisma format   // formata o código do arquivo schema.prisma
-npx prisma migrate dev --name init  // aplica uma migração
+npx prisma migrate dev --name init  // aplica uma migração (com nome = init)
 npx prisma studio   // abre os prisma studio
 npx prisma db push  // aplica as migrations em um banco novo
 
