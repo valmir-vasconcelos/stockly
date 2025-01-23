@@ -34,6 +34,9 @@ npm i server-only@0.0.1
 // lib para formatar números
 npm i react-number-format@5.4.2
 
+// lib: next-safe-action (biblioteca para lidar com erros nas server-actions)
+npm i next-safe-action@7.9.3
+
 https://github.com/felipemotarocha/stockly
 
 

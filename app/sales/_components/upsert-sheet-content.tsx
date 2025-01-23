@@ -1,55 +1,68 @@
-"use client"
+"use client";
+
+import { createSale } from "@/app/_actions/sale/create-sale";
 import { formatCurrency } from "@/app/_helpers/currency";
 import { Button } from "@/components/ui/button";
 import { Combobox, ComboboxOption } from "@/components/ui/combobox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, } from "@/components/ui/sheet";
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Product } from "@prisma/client";
 import { CheckIcon, PlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { flattenValidationErrors } from "next-safe-action";
+import { useAction } from "next-safe-action/hooks";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import UpsertSaleTableDropdownMenu from "./upsert-table-dropdown-menu";
-import { createSale } from "@/app/_actions/sale/create-sale";
 import { toast } from "sonner";
+import { z } from "zod";
+import SalesTableDropdownMenu from "./table-dropdown-menu";
 
 const formSchema = z.object({
     productId: z.coerce.number().int().positive({ message: "É necessário selecionar um produto" }),
     quantity: z.coerce.number().int().positive({ message: "A quantidade é obrigatória" })
-})
+});
 
-type FormSchema = z.infer<typeof formSchema>
+type FormSchema = z.infer<typeof formSchema>;
 
-interface Props {
-    products: Product[],
-    productOptions: ComboboxOption[]
+interface UpsertSheetContentProps {
+    products: Product[];
+    productOptions: ComboboxOption[];
+    setSheetIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 interface SelectedProduct {
-    id: number,
-    name: string,
-    price: number,
-    quantity: number
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
 }
 
-export default function UpsertSheetContent({ products, productOptions }: Props) {
-
+const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: UpsertSheetContentProps) => {
     const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
+    const { execute: executeCreateSale } = useAction(createSale, {
+        onError: ({ error: { validationErrors, serverError } }) => {
+            const flattenedErrors = flattenValidationErrors(validationErrors);
+            toast.error(serverError ?? flattenedErrors.formErrors[0]);
+        },
+        onSuccess: () => {
+            toast.success("Venda realizada com sucesso.");
+            setSheetIsOpen(false);
+        },
+    });
 
     const form = useForm<FormSchema>({
-        shouldUnregister: true, //limpa os campos do formulário
         resolver: zodResolver(formSchema),
         defaultValues: {
             productId: 0,
-            quantity: 1
-        }
-    })
-
-    function onSubmit(data: FormSchema) {
-        const selectedProduct = products.find((product) => product.id === data.productId);
+            quantity: 1,
+        },
+    });
+    const onSubmit = (data: FormSchema) => {
+        const selectedProduct = products.find(
+            (product) => product.id === data.productId,
+        );
         if (!selectedProduct) return;
         setSelectedProducts((currentProducts) => {
             const existingProduct = currentProducts.find(
@@ -104,60 +117,56 @@ export default function UpsertSheetContent({ products, productOptions }: Props) 
             return currentProducts.filter((product) => product.id !== productId);
         });
     };
-
-    async function onSubmitSale() {
-        try {
-            await createSale({
-                products: selectedProducts.map(product => ({
-                    id: product.id,
-                    quantity: product.quantity
-                }))
-            })
-            toast.success("Venda realizada com sucesso")
-        } catch (error) {
-            toast.error("Erro ao tentar criar a venda")
-        }
-    }
-
-    // const onSubmitSale = async () => {
-    //     executeUpsertSale({
-    //         id: saleId,
-    //         products: selectedProducts.map((product) => ({
-    //             id: product.id,
-    //             quantity: product.quantity,
-    //         })),
-    //     });
-    // };
-
+    const onSubmitSale = async () => {
+        executeCreateSale({
+            products: selectedProducts.map((product) => ({
+                id: product.id,
+                quantity: product.quantity,
+            })),
+        });
+    };
     return (
         <SheetContent className="!max-w-[700px]">
             <SheetHeader>
-                <SheetTitle>Nova Venda</SheetTitle>
-                <SheetDescription>Insira as informações da venda abaixo</SheetDescription>
+                <SheetTitle>Nova venda</SheetTitle>
+                <SheetDescription>
+                    Insira as informações da venda abaixo.
+                </SheetDescription>
             </SheetHeader>
 
             <Form {...form}>
-                <form className="space-y-6 py-6" onSubmit={form.handleSubmit(onSubmit)} >
-                    <FormField control={form.control} name="productId" render={({ field }) => (
-                        <FormItem className="w-full">
-                            <FormLabel>Produto</FormLabel>
-                            <FormControl>
-                                <Combobox value={field.value.toString()} onChange={field.onChange} options={productOptions} placeholder="Selecione um produto..." />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}>
-                    </FormField>
+                <form className="space-y-6 py-6" onSubmit={form.handleSubmit(onSubmit)}>
+                    <FormField
+                        control={form.control}
+                        name="productId"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Produto</FormLabel>
+                                <FormControl>
+                                    <Combobox placeholder="Selecione um produto" options={productOptions} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                    <FormField control={form.control} name="quantity" render={({ field }) => (
-                        <FormItem className="w-full">
-                            <FormLabel>Quantidade</FormLabel>
-                            <FormControl>
-                                <Input type="number" {...field} placeholder="Digite a quantidade" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )} />
+                    <FormField
+                        control={form.control}
+                        name="quantity"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Quantidade</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        placeholder="Digite a quantidade"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <Button type="submit" className="w-full gap-2" variant="secondary">
                         <PlusIcon size={20} />
@@ -183,12 +192,11 @@ export default function UpsertSheetContent({ products, productOptions }: Props) 
                             <TableCell>{product.name}</TableCell>
                             <TableCell>{formatCurrency(product.price)}</TableCell>
                             <TableCell>{product.quantity}</TableCell>
-                            <TableCell>{formatCurrency(product.price * product.quantity)}</TableCell>
                             <TableCell>
-                                <UpsertSaleTableDropdownMenu
-                                    product={product}
-                                    onDelete={onDelete}
-                                />
+                                {formatCurrency(product.price * product.quantity)}
+                            </TableCell>
+                            <TableCell>
+                                <SalesTableDropdownMenu product={product} onDelete={onDelete} />
                             </TableCell>
                         </TableRow>
                     ))}
@@ -206,13 +214,14 @@ export default function UpsertSheetContent({ products, productOptions }: Props) 
                 <Button
                     className="w-full gap-2"
                     disabled={selectedProducts.length === 0}
-                    onClick={onSubmitSale}>
+                    onClick={onSubmitSale}
+                >
                     <CheckIcon size={20} />
-                    Finalizar Venda
+                    Finalizar venda
                 </Button>
             </SheetFooter>
-
-
         </SheetContent>
-    )
-}
+    );
+};
+
+export default UpsertSheetContent;
