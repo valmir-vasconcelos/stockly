@@ -2,13 +2,13 @@
 
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ClipboardCopyIcon, EditIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react"
-import DeleteProductDialogContent from "./delete-dialog-content"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
-import UpsertProductDialogContent from "./upsert-product-dialog-content"
-import { useState } from "react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Product } from "@prisma/client"
+import { ClipboardCopyIcon, EditIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react"
+import { useState } from "react"
+import DeleteProductDialogContent from "./delete-dialog-content"
+import UpsertProductDialogContent from "./upsert-product-dialog-content"
 
 interface Props {
     product: Product
@@ -57,7 +57,7 @@ export default function ProductTableDropdownMenu({ product }: Props) {
                     stock: product.stock
 
                 }}
-                    onSuccess={() => setEditDialogIsOpen(false)}
+                    setDialogIsOpen={setEditDialogIsOpen}
                 />
                 <DeleteProductDialogContent productId={product.id} />
 

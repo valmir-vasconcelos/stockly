@@ -1,23 +1,45 @@
 "use client"
-import { Button } from "@/components/ui/button";
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2Icon, } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { NumericFormat } from "react-number-format";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
+
 import { createProduct, updateProduct, } from "@/app/_actions/product/upsert-product";
 import { upsertProductSchema, UpsertProductSchema } from "@/app/_actions/product/upsert-product/schema";
-import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2Icon, } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 
 interface Props {
     defaultValues?: UpsertProductSchema;
-    onSuccess?: () => void;
+    setDialogIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function UpsertProductDialogContent({ defaultValues, onSuccess }: Props) {
+export default function UpsertProductDialogContent({ defaultValues, setDialogIsOpen }: Props) {
+
+    const { execute: executeCreateProduct } = useAction(createProduct, {
+        onSuccess: () => {
+            toast.success("Produto cadastrado com sucesso!");
+            setDialogIsOpen(false);
+        },
+        onError: () => {
+            toast.success("Ocorreu um erro ao tentar cadastrar o produto!");
+        }
+    })
+
+    const { execute: executeUpdateProduct } = useAction(updateProduct, {
+        onSuccess: () => {
+            toast.success("Produto atualizado com sucesso!");
+            setDialogIsOpen(false);
+        },
+        onError: () => {
+            toast.success("Ocorreu um erro ao tentar atualizar o produto!");
+        }
+    })
 
     const form = useForm<UpsertProductSchema>({
         shouldUnregister: true, //limpa os campos do formulário
@@ -32,20 +54,12 @@ export default function UpsertProductDialogContent({ defaultValues, onSuccess }:
     const isEditting = !!defaultValues
 
     async function onSubmit(data: UpsertProductSchema) {
-        try {
-            if (isEditting) {
-                await updateProduct({ ...data, id: defaultValues?.id });
-                toast.success("Produto alterado com sucesso!");
-            } else {
-                await createProduct(data);
-                toast.success("Produto cadastrado com sucesso!");
-            }
-
-            onSuccess?.(); // função que fecha o dialog
-
-        } catch (error) {
-            console.error({ error })
-            toast.success("Ocorreu um erro ao tentar salvar o produto!");
+        if (isEditting) {
+            executeUpdateProduct({ ...data, id: defaultValues?.id });
+            toast.success("Produto alterado com sucesso!");
+        } else {
+            executeCreateProduct(data);
+            toast.success("Produto cadastrado com sucesso!");
         }
     }
 

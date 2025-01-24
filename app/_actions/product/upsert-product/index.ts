@@ -1,28 +1,33 @@
 "use server";
 import { db } from "@/lib/prisma";
+import { actionClient } from "@/lib/safe-action";
 import { revalidatePath } from "next/cache";
-import { upsertProductSchema, UpsertProductSchema } from "./schema";
+import { upsertProductSchema } from "./schema";
 
-export async function createProduct(data: UpsertProductSchema) {
-  // verifique se o usuário está logado e tem permissão
-  upsertProductSchema.parse(data);
-  await db.product.create({
-    data,
-  });
-  revalidatePath("/products");
-}
+export const createProduct = actionClient
+    .schema(upsertProductSchema)
+    .action(async ({ parsedInput: data }) => {
+        // verifique se o usuário está logado e tem permissão
+        // upsertProductSchema.parse(data);
+        await db.product.create({
+            data,
+        });
+        revalidatePath("/products");
+    })
 
-export async function updateProduct(data: UpsertProductSchema) {
-  // verifique se o usuário está logado e tem permissão
-  upsertProductSchema.parse(data);
-  await db.product.update({
-    where: {
-      id: data.id,
-    },
-    data,
-  });
-  revalidatePath("/products");
-}
+export const updateProduct = actionClient
+    .schema(upsertProductSchema)
+    .action(async ({ parsedInput: { id, ...data } }) => {
+        // verifique se o usuário está logado e tem permissão
+        // upsertProductSchema.parse(data);
+        await db.product.update({
+            where: {
+                id,
+            },
+            data,
+        });
+        revalidatePath("/products");
+    })
 
 /*
 server action 

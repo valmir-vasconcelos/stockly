@@ -17,7 +17,7 @@ export default function CreateProductButton() {
                     Novo produto
                 </Button>
             </DialogTrigger>
-            <UpsertProductDialogContent onSuccess={() => setDialogIsOpen(false)} />
+            <UpsertProductDialogContent setDialogIsOpen={setDialogIsOpen} />
 
         </Dialog >
     )
