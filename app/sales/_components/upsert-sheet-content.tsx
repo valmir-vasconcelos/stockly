@@ -1,23 +1,45 @@
 "use client";
 
-import { createSale } from "@/app/_actions/sale/create-sale";
+import { upsertSale } from "@/app/_actions/sale/upsert-sale";
+import { ProductDto } from "@/app/_data-access/product/get-products";
 import { formatCurrency } from "@/app/_helpers/currency";
 import { Button } from "@/components/ui/button";
 import { Combobox, ComboboxOption } from "@/components/ui/combobox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, } from "@/components/ui/sheet";
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
+import {
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+} from "@/components/ui/sheet";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Product } from "@prisma/client";
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { flattenValidationErrors } from "next-safe-action";
 import { useAction } from "next-safe-action/hooks";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import SalesTableDropdownMenu from "./table-dropdown-menu";
+import UpsertSaleTableDropdownMenu from "./upsert-table-dropdown-menu";
 
 const formSchema = z.object({
     productId: z.coerce.number().int().positive({ message: "É necessário selecionar um produto" }),
@@ -26,12 +48,6 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-interface UpsertSheetContentProps {
-    products: Product[];
-    productOptions: ComboboxOption[];
-    setSheetIsOpen: Dispatch<SetStateAction<boolean>>;
-}
-
 interface SelectedProduct {
     id: number;
     name: string;
@@ -39,9 +55,27 @@ interface SelectedProduct {
     quantity: number;
 }
 
-const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: UpsertSheetContentProps) => {
-    const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
-    const { execute: executeCreateSale } = useAction(createSale, {
+interface UpsertSheetContentProps {
+    isOpen: boolean;
+    saleId?: number;
+    products: ProductDto[];
+    productOptions: ComboboxOption[];
+    setSheetIsOpen: Dispatch<SetStateAction<boolean>>;
+    defaultSelectedProducts?: SelectedProduct[];
+}
+
+const UpsertSheetContent = ({
+    isOpen,
+    saleId,
+    products,
+    productOptions,
+    setSheetIsOpen,
+    defaultSelectedProducts,
+}: UpsertSheetContentProps) => {
+    const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
+        defaultSelectedProducts ?? [],
+    );
+    const { execute: executeUpsertSale } = useAction(upsertSale, {
         onError: ({ error: { validationErrors, serverError } }) => {
             const flattenedErrors = flattenValidationErrors(validationErrors);
             toast.error(serverError ?? flattenedErrors.formErrors[0]);
@@ -51,7 +85,6 @@ const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: Upsert
             setSheetIsOpen(false);
         },
     });
-
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -59,6 +92,15 @@ const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: Upsert
             quantity: 1,
         },
     });
+    useEffect(() => {
+        if (!isOpen) {
+            form.reset();
+            setSelectedProducts([]);
+        }
+    }, [form, isOpen]);
+    useEffect(() => {
+        setSelectedProducts(defaultSelectedProducts ?? []);
+    }, [defaultSelectedProducts]);
     const onSubmit = (data: FormSchema) => {
         const selectedProduct = products.find(
             (product) => product.id === data.productId,
@@ -118,7 +160,8 @@ const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: Upsert
         });
     };
     const onSubmitSale = async () => {
-        executeCreateSale({
+        executeUpsertSale({
+            id: saleId,
             products: selectedProducts.map((product) => ({
                 id: product.id,
                 quantity: product.quantity,
@@ -143,7 +186,11 @@ const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: Upsert
                             <FormItem className="w-full">
                                 <FormLabel>Produto</FormLabel>
                                 <FormControl>
-                                    <Combobox placeholder="Selecione um produto" options={productOptions} {...field} />
+                                    <Combobox
+                                        placeholder="Selecione um produto"
+                                        options={productOptions}
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -196,7 +243,10 @@ const UpsertSheetContent = ({ products, productOptions, setSheetIsOpen }: Upsert
                                 {formatCurrency(product.price * product.quantity)}
                             </TableCell>
                             <TableCell>
-                                <SalesTableDropdownMenu product={product} onDelete={onDelete} />
+                                <UpsertSaleTableDropdownMenu
+                                    product={product}
+                                    onDelete={onDelete}
+                                />
                             </TableCell>
                         </TableRow>
                     ))}

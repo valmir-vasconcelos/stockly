@@ -27,12 +27,8 @@ interface ComboboxProps {
     placeholder?: string;
 }
 
-export const Combobox = ({
-    value,
-    options,
-    placeholder,
-    onChange,
-}: ComboboxProps) => {
+export const Combobox = ({ options, value, onChange, placeholder }: ComboboxProps) => {
+
     const [open, setOpen] = React.useState(false);
 
     return (

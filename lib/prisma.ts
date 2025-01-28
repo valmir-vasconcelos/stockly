@@ -1,24 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { PrismaClient } from "@prisma/client";
+
 declare global {
+    // eslint-disable-next-line no-var
     var cachedPrisma: ReturnType<typeof createPrismaClient>;
 }
+
 const createPrismaClient = () => {
-    return new PrismaClient().$extends({
-        result: {
-            product: {
-                status: {
-                    needs: { stock: true },
-                    compute(product) {
-                        if (product.stock <= 0) {
-                            return "OUT_OF_STOCK";
-                        }
-                        return "IN_STOCK";
-                    },
-                },
-            },
-        },
-    });
+    return new PrismaClient();
 };
+
 let prisma: ReturnType<typeof createPrismaClient>;
 if (process.env.NODE_ENV === "production") {
     prisma = createPrismaClient();
@@ -28,4 +19,5 @@ if (process.env.NODE_ENV === "production") {
     }
     prisma = global.cachedPrisma;
 }
+
 export const db = prisma;

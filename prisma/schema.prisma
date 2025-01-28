@@ -28,7 +28,7 @@ model Sale {
   date      DateTime
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  products  SaleProduct[]
+  saleProducts  SaleProduct[]
 }
 
 model SaleProduct {
