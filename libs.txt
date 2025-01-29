@@ -19,6 +19,8 @@ npx shadcn@2.0.6 add alert-dialog
 npx shadcn@2.0.6 add sonner
 npx shadcn@2.0.6 add sheet
 npx shadcn@2.0.6 add command popover
+npx shadcn@2.0.6 add chart
+npx shadcn@2.0.6 add skeleton
 
 // prisma
 npm i prisma        // instala o prisma
@@ -36,6 +38,9 @@ npm i react-number-format@5.4.2
 
 // lib: next-safe-action (biblioteca para lidar com erros nas server-actions)
 npm i next-safe-action@7.9.3
+
+// lib para trabalhar com datas
+npm i dayjs@1.11.3
 
 https://github.com/felipemotarocha/stockly
 

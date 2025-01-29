@@ -1,8 +1,9 @@
 
 import { DataTable } from "../_components/data-table"
+import Header, { HeaderLeft, HeaderRight, HeaderSubtitle, HeaderTitle } from "../_components/header"
 import { getProducts } from "../_data-access/product/get-products"
-import { productTableColumns } from "./_components/table-colum"
 import CreateProductButton from "./_components/create-product-button"
+import { productTableColumns } from "./_components/table-colum"
 
 export const dynamic = "force-dynamic"
 
@@ -15,14 +16,16 @@ export default async function ProductsPage() {
     //await buscarCep("68515000")
 
     return (
-        <div className="m-8 w-full space-y-8 rounded-lg bg-white p-8">
-            <div className="flex w-full items-center justify-between">
-                <div className="space-y-1">
-                    <span className="font-semibold text-xs text-slate-500">Gestão de Produtos</span>
-                    <p className="text-gray-500">Lista de produtos cadastrados</p>
-                </div>
-                <CreateProductButton />
-            </div>
+        <div className="m-8 w-full space-y-8 rounded-lg">
+            <Header>
+                <HeaderLeft>
+                    <HeaderSubtitle>Gestão de Produtos</HeaderSubtitle>
+                    <HeaderTitle>Produtos</HeaderTitle>
+                </HeaderLeft>
+                <HeaderRight>
+                    <CreateProductButton />
+                </HeaderRight>
+            </Header>
             <DataTable columns={productTableColumns} data={JSON.parse(JSON.stringify(products))} />
         </div>
     )
