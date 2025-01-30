@@ -22,7 +22,7 @@ export interface ComboboxOption {
 
 interface ComboboxProps {
     options: ComboboxOption[];
-    value: string;
+    value: number;
     onChange: (value: string) => void;
     placeholder?: string;
 }
@@ -41,7 +41,7 @@ export const Combobox = ({ options, value, onChange, placeholder }: ComboboxProp
                     className="w-full justify-between"
                 >
                     {value
-                        ? options.find((option) => option.value === value)?.label
+                        ? options.find((option) => option.value === value.toString())?.label
                         : placeholder}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -57,14 +57,14 @@ export const Combobox = ({ options, value, onChange, placeholder }: ComboboxProp
                                     key={option.value}
                                     value={option.value}
                                     onSelect={(currentValue) => {
-                                        onChange(currentValue === value ? "" : currentValue);
+                                        onChange(currentValue === value.toString() ? "" : currentValue);
                                         setOpen(false);
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === option.value ? "opacity-100" : "opacity-0",
+                                            value.toString() === option.value ? "opacity-100" : "opacity-0",
                                         )}
                                     />
                                     {option.label}

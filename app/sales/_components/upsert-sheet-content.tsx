@@ -92,15 +92,18 @@ const UpsertSheetContent = ({
             quantity: 1,
         },
     });
+
     useEffect(() => {
         if (!isOpen) {
             form.reset();
             setSelectedProducts([]);
         }
     }, [form, isOpen]);
+
     useEffect(() => {
         setSelectedProducts(defaultSelectedProducts ?? []);
     }, [defaultSelectedProducts]);
+
     const onSubmit = (data: FormSchema) => {
         const selectedProduct = products.find(
             (product) => product.id === data.productId,

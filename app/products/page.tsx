@@ -16,7 +16,7 @@ export default async function ProductsPage() {
     //await buscarCep("68515000")
 
     return (
-        <div className="m-8 w-full space-y-8 rounded-lg">
+        <div className="m-8 w-full space-y-8 rounded-lg bg-white p-8 overflow-auto">
             <Header>
                 <HeaderLeft>
                     <HeaderSubtitle>Gestão de Produtos</HeaderSubtitle>
@@ -26,7 +26,8 @@ export default async function ProductsPage() {
                     <CreateProductButton />
                 </HeaderRight>
             </Header>
-            <DataTable columns={productTableColumns} data={JSON.parse(JSON.stringify(products))} />
+            <DataTable columns={productTableColumns} data={products} />
+            {/* <DataTable columns={productTableColumns} data={[...products, ...products, ...products]} /> */}
         </div>
     )
 }
